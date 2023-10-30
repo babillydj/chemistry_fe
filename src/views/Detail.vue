@@ -19,19 +19,21 @@
         </div>
       </div>
       <div class="flex gap-4">
-        <button class="border border-gray-400 w-40" @click="isOpenDelete = true">Delete</button>
-        <button class="border border-gray-400 w-40" @click="isOpenEdit = true">Edit</button>
+        <MaButton label="Delete" @on-click="isOpenDelete = true" ></MaButton>
+        <MaButton label="Edit" @on-click="isOpenEdit = true" ></MaButton>
       </div>
-      <button class="border border-gray-400 w-40" @click="gotoList">Go Back</button>
     </div>
     <div v-if="detail.smiles" class="mt-10 p-4 border border-gray-300">
       <MoleculeStructure
         :id="`structure-example-svg-1`"
         :structure="detail.smiles"
-        :width="1000"
-        :height="660"
+        :width="800"
+        :height="500"
         svg-mode
       ></MoleculeStructure>
+    </div>
+    <div class="w-1/3 mt-10">
+      <MaButton label="Go Back" type="secondary" @on-click="gotoList" ></MaButton>
     </div>
   </div>
   

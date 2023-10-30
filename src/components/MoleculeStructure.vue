@@ -8,21 +8,37 @@
     :title="`Cannot render structure: ${structure}`"
   ></span>
 
-  <div
-    v-else-if="svgMode"
-    :class="`molecule-structure-svg ${className}`"
-    :style="{ width: props.width, height: props.height }"
-    v-html="svg"
-  ></div>
-
-  <div v-else :class="`molecule-canvas-container ${className}`">
-    <canvas
-      :title="structure"
-      :id="id"
-      :width="width"
-      :height="height"
-    ></canvas>
-  </div>
+  <template v-else>
+    <div class="flex gap-4">
+      <div class="w-1/3 flex flex-col gap-4">
+        <span class="text-xl font-bold mb-4">Descriptors</span>
+        <div class="overflow-auto" :style="`height: ${height}px`">
+          <div v-for="item, idx in descriptorsSorted" :key="idx">
+            <span class="has-text-weight-bold">{{item[0]}}</span>: {{item[1]}}
+          </div>
+        </div>
+      </div>
+    
+      <div class="border-l border-gray-300 pl-6">
+        <span class="text-xl font-bold mb-4">Sample</span>
+        <div
+          v-if="svgMode"
+          :class="`molecule-structure-svg ${className}`"
+          :style="{ width: width, height: height }"
+          v-html="svg"
+        ></div>
+      
+        <div v-else :class="`molecule-canvas-container ${className}`">
+          <canvas
+            :title="structure"
+            :id="id"
+            :width="width"
+            :height="height"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  </template>
 </template>
 
 <script setup>
@@ -89,6 +105,8 @@ let molDetails = reactive({
   ...props.extraDetails
 });
 let svg = ref("");
+let descriptorsSorted = ref([])
+
 
 /**
  * Validate the molecule
@@ -191,6 +209,15 @@ function drawOnce() {
   };
 }
 
+function descriptor() {
+  const mol = window.RDKit.get_mol(props.structure);
+  const descriptors = JSON.parse(mol.get_descriptors());
+  descriptorsSorted.value = Object.keys(descriptors)
+    .sort(function(a,b) {return a.localeCompare(b, undefined, {sensitivity: 'base'});})
+    .map(function(descriptor) {return [descriptor, descriptors[descriptor]]}) 
+  console.log(descriptorsSorted)
+}
+
 /**
  * Load molecule on component mount
  */
@@ -203,6 +230,7 @@ onMounted(() => {
       rdkitLoaded.value = true;
       try {
         draw();
+        descriptor()
       } catch (err) {
         console.error(err);
       }
