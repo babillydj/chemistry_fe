@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="p-5 border-b border-b-gray-400 text-center">
-      <h1>MaSmiles</h1>
+      <h1 class="cursor-pointer" @click="gotoHome">MaSmiles</h1>
     </div>
     <div class="w-full h-[calc(100vh-97px)] overflow-hidden p-4">
       <router-view></router-view>
@@ -23,7 +23,9 @@ export default {
 
   },
   methods: {
-
+    gotoHome() {
+      this.$router.push({path: '/list'})
+    },
   }
 }
 </script>

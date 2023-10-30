@@ -1,27 +1,38 @@
 <template>
-  <div v-if="isNotFound" class="flex flex-col gap-4">
-    <span>Data Not Found</span>
-    <button class="border border-gray-400 w-40" @click="gotoList">Go Back</button>
-  </div>
-  <div v-else class="flex flex-col gap-6">
-    <div class="flex gap-4">
-      <div class="flex flex-col">
-        <span>name</span>
-        <span>smile</span>
-        <span>description</span>
-        <span>log_p</span>
-        <span>number_of_atoms</span>
-        <span>molecular_weight</span>
-      </div>
-      <div class="flex flex-col">
-        <span v-for="key,idx of Object.keys(detail)" :key="idx">: {{detail[key]}}</span>
-      </div>
+  <div class="w-full h-full pt-10 flex flex-col gap-4 items-center">
+    <div v-if="isNotFound" class="flex flex-col gap-4">
+      <span>Data Not Found</span>
+      <button class="border border-gray-400 w-40" @click="gotoList">Go Back</button>
     </div>
-    <div class="flex gap-4">
-      <button class="border border-gray-400 w-40" @click="isOpenDelete = true">Delete</button>
-      <button class="border border-gray-400 w-40" @click="isOpenEdit = true">Edit</button>
+    <div v-else class="p-4 flex flex-col gap-6  border border-gray-300">
+      <div class="flex gap-4">
+        <div class="flex flex-col">
+          <span>name</span>
+          <span>smile</span>
+          <span>description</span>
+          <span>log_p</span>
+          <span>number_of_atoms</span>
+          <span>molecular_weight</span>
+        </div>
+        <div class="flex flex-col">
+          <span v-for="key,idx of Object.keys(detail)" :key="idx">: {{detail[key]}}</span>
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <button class="border border-gray-400 w-40" @click="isOpenDelete = true">Delete</button>
+        <button class="border border-gray-400 w-40" @click="isOpenEdit = true">Edit</button>
+      </div>
+      <button class="border border-gray-400 w-40" @click="gotoList">Go Back</button>
     </div>
-    <button class="border border-gray-400 w-40" @click="gotoList">Go Back</button>
+    <div v-if="detail.smiles" class="mt-10 p-4 border border-gray-300">
+      <MoleculeStructure
+        :id="`structure-example-svg-1`"
+        :structure="detail.smiles"
+        :width="1000"
+        :height="660"
+        svg-mode
+      ></MoleculeStructure>
+    </div>
   </div>
   
 	<MaModal
@@ -94,13 +105,15 @@ import { apiUrls } from "@/lib/request/urls"
 import MaModal from '@/components/Modal.vue';
 import MaButton from '@/components/Button.vue';
 import MaInput from '@/components/Input.vue';
+import MoleculeStructure from "@/components/MoleculeStructure.vue";
 
 export default {
   name: 'DetailPage',
   components: {
     MaModal,
     MaButton,
-    MaInput
+    MaInput,
+    MoleculeStructure
   },
   setup() {},
   data() {
