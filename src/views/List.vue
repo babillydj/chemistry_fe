@@ -42,17 +42,27 @@
           
         </template>
       </div>
-      <div v-if="molecules.length == 0" class="p-4 border border-gray-400 w-3/4 rounded-lg shadow-lg">
-        <p>The list is empty</p> 
-      </div>
-      <div v-else class="flex-grow flex flex-col gap-4 items-center w-full overflow-auto">
-        <div
-            v-for="molecule,idx in molecules" :key="idx"
-            class="p-4 border border-gray-400 w-3/4 rounded-lg shadow-lg cursor-pointer"
-            @click="gotoDetail(molecule.id)"
-        >
-          <p>name : {{molecule.name}}</p> 
-          <p>smiles : {{molecule.smiles}}</p> 
+      <div class="w-3/4 ">
+        <div class="mb-10">
+          <MaSelect 
+            :label="{title: 'Sort', position: 'top', fontWeight: 'bold'}" 
+            :model-value="selectedSort" 
+            :options="sortOptions" 
+            @select="onSortSelect"
+          />
+        </div>
+        <div v-if="molecules.length == 0" class="p-4 border border-gray-400 w-full rounded-lg shadow-lg">
+          <p>The list is empty</p> 
+        </div>
+        <div v-else class="flex-grow flex flex-col gap-4 items-center w-full overflow-auto">
+          <div
+              v-for="molecule,idx in molecules" :key="idx"
+              class="p-4 border border-gray-400 w-full rounded-lg shadow-lg cursor-pointer"
+              @click="gotoDetail(molecule.id)"
+          >
+            <p>name : {{molecule.name}}</p> 
+            <p>smiles : {{molecule.smiles}}</p> 
+          </div>
         </div>
       </div>
     </div>
@@ -61,8 +71,13 @@
 import { doRequest } from "@/lib/request"
 import { apiUrls } from "@/lib/request/urls"
 
+import MaSelect from '@/components/Select.vue';
+
 export default {
   name: 'ListPage',
+  components: {
+    MaSelect
+  },
   setup () {
 
   },
@@ -75,16 +90,33 @@ export default {
       onProgress: false,
       timeRemaining: null,
       isDragOver: false,
-      errorMessage: ''
+      errorMessage: '',
+      selectedSort: 'updated',
+      sortOptions: [
+        {
+          text: "updated",
+          value: "updated"
+        },
+        {
+          text: "name",
+          value: "name"
+        },
+      ], 
     };
   },
   mounted() {
     this.getMolecules()
   },
   methods: {
+    onSortSelect(value) {
+      this.selectedSort = value
+      this.getMolecules()
+    },
     async getMolecules() {
+      console.log('kesini')
+      const url = apiUrls.moleculeList + "?sort_by=" + this.selectedSort
       const payload = {
-        url: apiUrls.moleculeList,
+        url: url,
         method: 'get',
         data: {}
       }
